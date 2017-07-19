@@ -84,15 +84,16 @@
                 direction = "right";
                 bounce = true;
             }
-            wait = bounce ? 500 : interval;
+            wait = bounce ? 250 : interval;
 
             context.fillStyle = bgColor;
             context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = lightColor;            
+            context.beginPath();
+            context.arc(lightCanvasX, lightCanvasY, lightSize, 0, 2 * Math.PI);
             context.fillStyle = lightColor;
-            context.fillRect(lightCanvasX, lightCanvasY, lightSize, lightSize);
-
+            context.fill();
             setTimeout(lightTick, wait);
-
         }
 
         function btnToggle_click() {
