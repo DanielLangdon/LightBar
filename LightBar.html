@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Light Bar</title>
+    <style>
+        canvas {
+            position: absolute;
+            z-index: -1;
+        }
+        .divInputs {
+            position: absolute;
+            z-index: 1;
+            background-color: #ffffff;
+            color: #ffffff
+        }
+
+    </style>
+</head>
+<body>
+    <canvas>        
+    </canvas>
+    <div id="divInputs">
+        <input
+               type="button"
+               id="btnToggle"
+               value="Start" />
+        Background Color:
+        <input
+               type="color"
+               id="colBg"
+               value="#000000" />
+        Light Color:
+        <input
+               type="color"
+               id="colLight"
+               value="#0000ff" />
+    </div>
+    <script>
+        "use strict";
+        // lightX and lightY will be set between 0 and 1 and then transposed onto the size of the canvas appropriately.
+        var canvas, context, bgColor, lightColor, lightSize, lightX, lightY, frameRate, interval, btnToggle, status, direction;
+
+        function initCanvas() {
+            canvas = document.getElementsByTagName("canvas")[0];
+            context = canvas.getContext("2d");
+            bgColor = "#000000";
+            lightColor = "#0000ff";
+            lightSize = 48;
+            lightX = 0.5;
+            lightY = 0.5;
+            frameRate = 60;
+            interval = Math.floor(1000 / frameRate);
+            status = "stopped";
+            direction = "right";
+            setCanvasWidth();
+        }
+
+        function initInputs() {
+            btnToggle = document.getElementById("btnToggle");
+            btnToggle.addEventListener("click", btnToggle_click);
+        }
+
+        function setCanvasWidth() {
+            // https://stackoverflow.com/questions/1248081/get-the-browser-viewport-dimensions-with-javascript
+            canvas.width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+            canvas.height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);            
+            context.fillStyle = bgColor;
+            context.fillRect(0, 0, canvas.width, canvas.height);            
+        }        
+
+        function lightTick() {            
+            var lightCanvasX, lightCanvasY, delta, bounce, wait;
+
+            delta = (direction === "right") ? 0.01 : -0.01;
+            bounce = false;
+            lightX += delta;            
+            lightCanvasX = lightX * canvas.width;
+            lightCanvasY = lightY * canvas.height;
+            if (lightX >= 1) {
+                direction = "left";
+                bounce = true;
+            } else if (lightX <= 0) {
+                direction = "right";
+                bounce = true;
+            }
+            wait = bounce ? 500 : interval;
+
+            context.fillStyle = bgColor;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = lightColor;
+            context.fillRect(lightCanvasX, lightCanvasY, lightSize, lightSize);
+
+            setTimeout(lightTick, wait);
+
+        }
+
+        function btnToggle_click() {
+            function start() {
+                status = "running";
+                setTimeout(lightTick, interval);
+            }
+            function stop() {
+                status = "stopping";
+            }
+
+            if (status === "running") {
+                stop();
+            } else {
+                start();
+            }            
+        }
+
+        initCanvas();
+        initInputs();
+        window.addEventListener("resize", function () {
+            setCanvasWidth();
+        });
+
+        
+    </script>
+</body>
+</html>
