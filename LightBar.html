@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <title>Light Bar</title>
     <style>
+        body {
+            overflow: hidden;
+        }
         canvas {
             position: absolute;
             z-index: -1;
@@ -49,7 +52,7 @@
             lightSize = 48;
             lightX = 0.5;
             lightY = 0.5;
-            frameRate = 60;
+            frameRate = 30;
             interval = Math.floor(1000 / frameRate);
             status = "stopped";
             direction = "right";
@@ -63,8 +66,8 @@
 
         function setCanvasWidth() {
             // https://stackoverflow.com/questions/1248081/get-the-browser-viewport-dimensions-with-javascript
-            canvas.width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-            canvas.height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             context.fillStyle = bgColor;
             context.fillRect(0, 0, canvas.width, canvas.height);            
         }        
