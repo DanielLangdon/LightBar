@@ -43,17 +43,17 @@
         "use strict";
         // lightX and lightY will be set between 0 and 1 and then transposed onto the size of the canvas appropriately.
         var canvas, context, bgColor, lightColor, lightSize, lightX, lightY, frameRate, interval, btnToggle, status, direction;
-
+        debugger
         function initCanvas() {
             canvas = document.getElementsByTagName("canvas")[0];
             context = canvas.getContext("2d");
             bgColor = "#000000";
-            lightColor = "#0000ff";
+            lightColor = "#9999ff";
             lightSize = 48;
             lightX = 0.5;
             lightY = 0.5;
-            frameRate = 30;
-            interval = Math.floor(1000 / frameRate);
+            frameRate = 60;
+            interval = Math.floor(500 / frameRate);
             status = "stopped";
             direction = "right";
             setCanvasWidth();
@@ -87,7 +87,7 @@
                 direction = "right";
                 bounce = true;
             }
-            wait = bounce ? 250 : interval;
+            wait = bounce ? 100 : interval;
 
             context.fillStyle = bgColor;
             context.fillRect(0, 0, canvas.width, canvas.height);
@@ -96,21 +96,32 @@
             context.arc(lightCanvasX, lightCanvasY, lightSize, 0, 2 * Math.PI);
             context.fillStyle = lightColor;
             context.fill();
-            setTimeout(lightTick, wait);
+
+            // Check if we're at the original position having received a command to stop.
+            if (status === "stopping" && lightX === 0.5 && direction === "right") {
+                status = "stopped";
+            }
+            else {
+                setTimeout(lightTick, wait);
+            }
+            
         }
 
         function btnToggle_click() {
-            function start() {
+            
+            function start() {                                
                 status = "running";
                 setTimeout(lightTick, interval);
+                btnToggle.value = "Stop";
             }
             function stop() {
                 status = "stopping";
+                btnToggle.value = "Start";
             }
 
             if (status === "running") {
                 stop();
-            } else {
+            } else if (status !== "stopping") {
                 start();
             }            
         }
